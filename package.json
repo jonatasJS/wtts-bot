@@ -1,0 +1,20 @@
+{
+  "name": "wtts-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node .",
+    "dev": "nodemon ."
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "log-to-file": "^3.0.3",
+    "moment": "^2.29.4",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
