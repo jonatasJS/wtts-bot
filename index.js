@@ -1,9 +1,8 @@
 const qrcode = require('qrcode-terminal');
 const { Client } = require('whatsapp-web.js');
 const moment = require('moment');
-const log = require('log-to-file');
+const log = require('./utils/log');
 const express = require('express');
-const fs = require('fs');
 const qri = require('qr-image')
 
 const app = express();
@@ -45,8 +44,12 @@ client.on('ready', async () => {
   console.log(`Client is ready!`);
 });
 
-app.get('/logs', (req, res) => {
-  res.sendFile(__dirname + `\\logs\\${now.date}.log`);
+app.get('/logs/log', (req, res) => {
+  res.sendFile(__dirname + `\\logs\\log\\${now.date}.log`);
+});
+
+app.get('/logs/json', (req, res) => {
+  res.sendFile(__dirname + `\\logs\\json\\${now.date}.json`);
 });
 
 client.on('disconnected', async () => {
@@ -54,28 +57,17 @@ client.on('disconnected', async () => {
 });
 
 client.on('message', async message => {
-  const { _data: {
-    notifyName,
-    deprecatedMms3Url
-  }, type, body, from, deviceType } = message;
 
   if (!message.body.startsWith(prefix)) {
-    if (fs.existsSync(__dirname + `\\logs\\${now.date}.log`)) log(`"${deviceType}" - ${notifyName} (${from} - ${type}): ${body}${(deprecatedMms3Url !== "" || deprecatedMms3Url !== undefined) ? "\r\nLink: " + deprecatedMms3Url : ''}`, __dirname + `\\logs\\${now.date}.log`, '\r\n');
-    else {
-      fs.writeFileSync(__dirname + `\\logs\\${now.date}.log`, "");
-      log(`"${deviceType}" - ${notifyName} (${from} - ${type}): ${body}${(deprecatedMms3Url !== "" || deprecatedMms3Url !== undefined) ? "\r\nLink: " + deprecatedMms3Url : ''}`, __dirname + `\\logs\\${now.date}.log`, '\r\n');
-    }
+    log(now.date, message, 'log');
+    log(now.date, message, 'json');
   }
   if (message.body.startsWith(prefix + 'ping')) {
     message.reply(`🏓Latency is *${moment(Date.now() - message.timestamp).format('SS')}ms*`);
     await console.log(await message.getInfo());
 
-    if (fs.existsSync(__dirname + `\\logs\\${now.date}.log`)) log(`"${deviceType}" - ${notifyName} (${from} - ${type}): ${body}${(deprecatedMms3Url !== "" || deprecatedMms3Url !== undefined) ? "\r\nLink: " + deprecatedMms3Url : ''}`, __dirname + `\\logs\\${now.date}.log`, '\r\n');
-    else {
-      fs.writeFileSync(__dirname + `\\logs\\${now.date}.log`, "");
-
-      log(`"${deviceType}" - ${notifyName} (${from} - ${type}): ${body}${(deprecatedMms3Url !== "" || deprecatedMms3Url !== undefined) ? "\r\nLink: " + deprecatedMms3Url : ''}`, __dirname + `\\logs\\${now.date}.log`, '\r\n');
-    }
+    log(now.date, message, 'log');
+    log(now.date, message, 'json');
   }
 });
 
