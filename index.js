@@ -19,6 +19,7 @@ client.on('qr', async qr => {
     small: true
   }, async (qrcode) => {
 
+    console.clear();
     console.log(qrcode)
 
     await app.get('/', async (req, res) => {
